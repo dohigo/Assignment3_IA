@@ -31,19 +31,19 @@ class NonCooperativeStrategy(AntStrategy):
             state["pos"] = (state["pos"][0] + dx, state["pos"][1] + dy)
             state["visited"].add(state["pos"])
 
-            state["direction"] = perception.direction
+        state["direction"] = perception.direction
 
-            ax, ay = state["pos"] # absolute position
-            for (rdx, rdy), terrain in perception.visible_cells.items():
-                abs_pos = (ax + rdx, ay + rdy)
-                old = state["known_map"].get(abs_pos)
-                state["known_map"][abs_pos] = terrain
-                if terrain == TerrainType.FOOD:
-                    state["known_food"].add(abs_pos)
-                elif terrain == TerrainType.COLONY:
-                    state["colony_pos"] = abs_pos
-                elif old == TerrainType.FOOD and terrain != TerrainType.FOOD:
-                    state["known_food"].discard(abs_pos)
+        ax, ay = state["pos"] # absolute position
+        for (rdx, rdy), terrain in perception.visible_cells.items():
+            abs_pos = (ax + rdx, ay + rdy)
+            old = state["known_map"].get(abs_pos)
+            state["known_map"][abs_pos] = terrain
+            if terrain == TerrainType.FOOD:
+                state["known_food"].add(abs_pos)
+            elif terrain == TerrainType.COLONY:
+                state["colony_pos"] = abs_pos
+            elif old == TerrainType.FOOD and terrain != TerrainType.FOOD:
+                state["known_food"].discard(abs_pos)
 
 
     def _is_visible_and_clear(self, perception, rdx, rdy):
@@ -95,23 +95,23 @@ class NonCooperativeStrategy(AntStrategy):
         while queue:
             pos, path = queue.popleft()
 
-        for d in Direction: # 8 directions
-            dx, dy = Direction.get_delta(d)
-            neighbor_pos = (pos[0] + dx, pos[1] + dy)
+            for d in Direction: # 8 directions
+                dx, dy = Direction.get_delta(d)
+                neighbor_pos = (pos[0] + dx, pos[1] + dy)
 
-            if neighbor_pos in seen:
-                continue
+                if neighbor_pos in seen:
+                    continue
 
-            terrain = state["known_map"].get(neighbor_pos)
-            if terrain is None or terrain == TerrainType.WALL:
-                continue
+                terrain = state["known_map"].get(neighbor_pos)
+                if terrain is None or terrain == TerrainType.WALL:
+                    continue
 
-            new_path = path + [neighbor_pos]
-            if neighbor_pos == goal:
-                return new_path
-            
-            seen.add(neighbor_pos)
-            queue.append((neighbor_pos, new_path))
+                new_path = path + [neighbor_pos]
+                if neighbor_pos == goal:
+                    return new_path
+                
+                seen.add(neighbor_pos)
+                queue.append((neighbor_pos, new_path))
 
 
         return []
